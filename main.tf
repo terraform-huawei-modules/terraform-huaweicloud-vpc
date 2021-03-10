@@ -98,3 +98,29 @@ resource "huaweicloud_vpc_eip" "natgw" {
   }
 }
 
+#
+# VPC Endpoints - dns is free.
+#
+data "huaweicloud_vpcep_public_services" "dns" {
+  service_name = "dns"
+}
+
+resource "huaweicloud_vpcep_endpoint" "dns_for_public_subnets" {
+  count            = length(huaweicloud_vpc_subnet.public.*.id)
+  service_id       = data.huaweicloud_vpcep_public_services.dns.id
+  vpc_id           = huaweicloud_vpc.this.id
+  network_id       = huaweicloud_vpc_subnet.public.*.id[count.index]
+  enable_dns       = true
+  enable_whitelist = true
+  whitelist        = [huaweicloud_vpc_subnet.public.*.cidr[count.index]]
+}
+
+resource "huaweicloud_vpcep_endpoint" "dns_for_private_subnets" {
+  count            = length(huaweicloud_vpc_subnet.private.*.id)
+  service_id       = data.huaweicloud_vpcep_public_services.dns.id
+  vpc_id           = huaweicloud_vpc.this.id
+  network_id       = huaweicloud_vpc_subnet.private.*.id[count.index]
+  enable_dns       = true
+  enable_whitelist = true
+  whitelist        = [huaweicloud_vpc_subnet.private.*.cidr[count.index]]
+}
