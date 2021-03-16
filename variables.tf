@@ -22,12 +22,6 @@ variable "private_subnet_suffix" {
   default     = "private"
 }
 
-variable "azs" {
-  description = "A list of availability zone"
-  type        = list(string)
-  default     = []
-}
-
 variable "create_nat_gateway" {
   description = "Whether to create NAT Gateway or not"
   type        = bool
@@ -35,7 +29,7 @@ variable "create_nat_gateway" {
 }
 
 variable "nat_gateway_spec" {
-  description = "Whether to create NAT Gateway or not"
+  description = "NAT Gateway SNAT Connection. Values are 1, 2, 3, 4"
   type        = number
   default     = 2
 }
@@ -43,12 +37,11 @@ variable "nat_gateway_spec" {
 variable "public_subnets" {
   description = "A list of public subnets inside the VPC"
   type = list(object({
-    name              = string
-    cidr              = string
-    gateway_ip        = string
-    availability_zone = string
-    primary_dns       = string
-    secondary_dns     = string
+    name          = string
+    cidr          = string
+    gateway_ip    = string
+    primary_dns   = string
+    secondary_dns = string
   }))
   default = []
 }
@@ -56,12 +49,11 @@ variable "public_subnets" {
 variable "private_subnets" {
   description = "A list of private subnets inside the VPC"
   type = list(object({
-    name              = string
-    cidr              = string
-    gateway_ip        = string
-    availability_zone = string
-    primary_dns       = string
-    secondary_dns     = string
+    name          = string
+    cidr          = string
+    gateway_ip    = string
+    primary_dns   = string
+    secondary_dns = string
   }))
   default = []
 }
@@ -81,23 +73,15 @@ variable "vpc_tags" {
 variable "public_subnet_tags" {
   description = "Additional tags for the public subnets"
   type        = map(string)
-  default     = {}
+  default = {
+    Type = "public"
+  }
 }
 
 variable "private_subnet_tags" {
   description = "Additional tags for the private subnets"
   type        = map(string)
-  default     = {}
-}
-
-variable "public_route_table_tags" {
-  description = "Additional tags for the public route tables"
-  type        = map(string)
-  default     = {}
-}
-
-variable "private_route_table_tags" {
-  description = "Additional tags for the private route tables"
-  type        = map(string)
-  default     = {}
+  default = {
+    Type = "private"
+  }
 }
