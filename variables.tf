@@ -7,19 +7,6 @@ variable "name" {
 variable "cidr" {
   description = "The CIDR block for the VPC. Default value is a valid CIDR, but not acceptable by AWS and should be overridden"
   type        = string
-  default     = "0.0.0.0/0"
-}
-
-variable "public_subnet_suffix" {
-  description = "Suffix to append to public subnets name"
-  type        = string
-  default     = "public"
-}
-
-variable "private_subnet_suffix" {
-  description = "Suffix to append to private subnets name"
-  type        = string
-  default     = "private"
 }
 
 variable "create_nat_gateway" {
@@ -34,20 +21,8 @@ variable "nat_gateway_spec" {
   default     = 2
 }
 
-variable "public_subnets" {
-  description = "A list of public subnets inside the VPC"
-  type = list(object({
-    name          = string
-    cidr          = string
-    gateway_ip    = string
-    primary_dns   = string
-    secondary_dns = string
-  }))
-  default = []
-}
-
-variable "private_subnets" {
-  description = "A list of private subnets inside the VPC"
+variable "subnets" {
+  description = "A list of subnets inside the VPC"
   type = list(object({
     name          = string
     cidr          = string
@@ -70,18 +45,11 @@ variable "vpc_tags" {
   default     = {}
 }
 
-variable "public_subnet_tags" {
-  description = "Additional tags for the public subnets"
+variable "subnet_tags" {
+  description = "Additional tags for the subnets"
   type        = map(string)
   default = {
-    Type = "public"
+    Type = "default"
   }
 }
 
-variable "private_subnet_tags" {
-  description = "Additional tags for the private subnets"
-  type        = map(string)
-  default = {
-    Type = "private"
-  }
-}
