@@ -40,9 +40,9 @@ resource "huaweicloud_vpc_subnet" "this" {
 # NAT Gateway(s)
 #
 resource "huaweicloud_nat_gateway" "natgw" {
-  count               = var.create_nat_gateway ? length(huaweicloud_vpc_subnet.this.*.id) : 0
+  count               = var.create_nat_gateway ? 1 : 0
   name                = "${var.name}-natgw-${count.index}"
-  description         = "NAT Gateway for ${huaweicloud_vpc_subnet.this.*.name[count.index]}"
+  description         = "NAT Gateway for ${var.name}"
   spec                = var.nat_gateway_spec
   router_id           = huaweicloud_vpc.this.id
   internal_network_id = huaweicloud_vpc_subnet.this.*.id[count.index]
@@ -50,13 +50,14 @@ resource "huaweicloud_nat_gateway" "natgw" {
 
 resource "huaweicloud_nat_snat_rule" "natgw" {
   count          = var.create_nat_gateway ? length(huaweicloud_vpc_subnet.this.*.id) : 0
-  nat_gateway_id = huaweicloud_nat_gateway.natgw.*.id[count.index]
+  source_type    = 0
+  nat_gateway_id = huaweicloud_nat_gateway.natgw.*.id[0]
   network_id     = huaweicloud_vpc_subnet.this.*.id[count.index]
-  floating_ip_id = huaweicloud_vpc_eip.natgw.*.id[count.index]
+  floating_ip_id = huaweicloud_vpc_eip.natgw.*.id[0]
 }
 
 resource "huaweicloud_vpc_eip" "natgw" {
-  count = var.create_nat_gateway ? length(huaweicloud_vpc_subnet.this.*.id) : 0
+  count = var.create_nat_gateway ? 1 : 0
   publicip {
     type = "5_bgp"
   }
